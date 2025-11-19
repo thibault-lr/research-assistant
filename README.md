@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+This project requires the following environment variables to be set:
+
+- `BIOMCP_URL` - The URL of the BioMCP server (SSE endpoint). Example: `https://biomcp-server.com/sse`
+- `GOOGLE_GENERATIVE_AI_API_KEY` - Your Google Generative AI API key for the Gemini model
+
+Create a `.env.local` file in the root directory with these variables:
+
+```bash
+BIOMCP_URL=https://biomcp-server.com/sse
+GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
+```
+
 ## Getting Started
 
 First, run the development server:
