@@ -6,6 +6,9 @@ import {
   trialSearchArgsSchema,
   variantSearchArgsSchema,
   aiResultSchema,
+  type ArticleSearchInput,
+  type TrialSearchInput,
+  type VariantSearchInput,
   type ArticleSearchArgs,
   type TrialSearchArgs,
   type VariantSearchArgs,
@@ -15,7 +18,7 @@ import {
 type StreamTextOptions = Parameters<typeof streamText>[0];
 type StreamTextResult = ReturnType<typeof streamText>;
 
-export const AI_MODEL: LanguageModel = google("gemini-2.0-flash-exp");
+export const AI_MODEL: LanguageModel = google("gemini-2.0-flash");
 
 export const AI_SYSTEM_PROMPT = `You are a biomedical research assistant that helps researchers find and analyze scientific data.
 
@@ -34,8 +37,17 @@ const tools = {
       "Search PubMed/PubTator3 for biomedical literature. Use for finding research papers, publications, or articles about genes, diseases, drugs, or variants.",
     inputSchema: articleSearchArgsSchema,
     outputSchema: aiResultSchema,
-    execute: async (params: ArticleSearchArgs): Promise<AiResult> => {
-      return callBioMCPTool<AiResult>("article_searcher", params);
+    execute: async (params: ArticleSearchInput): Promise<AiResult> => {
+      const transformed: ArticleSearchArgs = {
+        keywords: params.keywords ? [params.keywords] : undefined,
+        diseases: params.diseases ? [params.diseases] : undefined,
+        genes: params.genes ? [params.genes] : undefined,
+        chemicals: params.chemicals ? [params.chemicals] : undefined,
+        variants: params.variants ? [params.variants] : undefined,
+        page_size: params.page_size ?? 10,
+        include_preprints: true,
+      };
+      return callBioMCPTool<AiResult>("article_searcher", transformed);
     },
   }),
 
@@ -44,8 +56,18 @@ const tools = {
       "Search ClinicalTrials.gov for clinical trials. Use when users ask about studies, trials, recruiting status, or clinical research.",
     inputSchema: trialSearchArgsSchema,
     outputSchema: aiResultSchema,
-    execute: async (params: TrialSearchArgs): Promise<AiResult> => {
-      return callBioMCPTool<AiResult>("trial_searcher", params);
+    execute: async (params: TrialSearchInput): Promise<AiResult> => {
+      const transformed: TrialSearchArgs = {
+        conditions: params.conditions ? [params.conditions] : undefined,
+        interventions: params.interventions
+          ? [params.interventions]
+          : undefined,
+        other_terms: params.other_terms ? [params.other_terms] : undefined,
+        recruiting_status: params.recruiting_status,
+        phase: params.phase,
+        page_size: params.page_size ?? 10,
+      };
+      return callBioMCPTool<AiResult>("trial_searcher", transformed);
     },
   }),
 
@@ -54,8 +76,15 @@ const tools = {
       "Search MyVariant.info for genetic variant information. Use when users ask about mutations, variants, rsIDs, or genetic annotations.",
     inputSchema: variantSearchArgsSchema,
     outputSchema: aiResultSchema,
-    execute: async (params: VariantSearchArgs): Promise<AiResult> => {
-      return callBioMCPTool<AiResult>("variant_searcher", params);
+    execute: async (params: VariantSearchInput): Promise<AiResult> => {
+      const transformed: VariantSearchArgs = {
+        rsid: params.rsid,
+        gene: params.gene,
+        hgvs: params.hgvs,
+        significance: params.significance,
+        page_size: params.page_size ?? 10,
+      };
+      return callBioMCPTool<AiResult>("variant_searcher", transformed);
     },
   }),
 };
