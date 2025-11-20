@@ -60,14 +60,10 @@ export async function POST(req: Request) {
     const { messages } = chatRequestSchema.parse(reqBody);
 
     const convertedMessages = messages.map(normalizeMessage);
-    console.log("[API] Received messages:", convertedMessages);
-
     const result = streamAIResponse(convertedMessages);
-    console.log("[API] Stream result created");
 
-    return result.toTextStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
-    // Log unwanted behaviors somewhere on Sentry/Datadog...
     console.error("[API Error]", error);
 
     if (error instanceof z.ZodError) {
