@@ -10,9 +10,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [tsconfigPaths(), react()],
     test: {
-      environment: "node",
+      environment: "jsdom",
       env,
       exclude: ["*.e2e-spec.ts", "node_modules/**"],
+      setupFiles: ["./src/setupTests.ts"],
     },
   };
 });
