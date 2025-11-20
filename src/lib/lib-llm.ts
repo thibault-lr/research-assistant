@@ -21,14 +21,7 @@ import {
 
 const AI_MODEL = google("gemini-2.0-flash");
 
-// The MCP Parameters does not seem to accept undefined values
-function filterUndefined<T extends Record<string, unknown>>(
-  obj: T
-): Partial<T> {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_key, value]) => value !== undefined)
-  ) as Partial<T>;
-}
+
 
 const tools = {
   searchArticles: tool({
@@ -46,8 +39,7 @@ const tools = {
         page_size: params.page_size ?? 10,
         include_preprints: true,
       };
-      const filteredArgs = filterUndefined(transformed);
-      return await callBioMCPTool<AiResult>("article_searcher", filteredArgs);
+      return await callBioMCPTool<AiResult>("article_searcher", transformed);
     },
   }),
 
@@ -67,8 +59,7 @@ const tools = {
         phase: params.phase,
         page_size: params.page_size ?? 10,
       };
-      const filteredArgs = filterUndefined(transformed);
-      return await callBioMCPTool<AiResult>("trial_searcher", filteredArgs);
+      return await callBioMCPTool<AiResult>("trial_searcher", transformed);
     },
   }),
 
@@ -85,8 +76,7 @@ const tools = {
         significance: params.significance,
         page_size: params.page_size ?? 10,
       };
-      const filteredArgs = filterUndefined(transformed);
-      return await callBioMCPTool<AiResult>("variant_searcher", filteredArgs);
+      return await callBioMCPTool<AiResult>("variant_searcher", transformed);
     },
   }),
 
