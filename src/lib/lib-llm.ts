@@ -17,11 +17,7 @@ import {
   type AiResult,
 } from "@/domain/tools";
 
-
-
 const AI_MODEL = google("gemini-2.0-flash");
-
-
 
 const tools = {
   searchArticles: tool({
@@ -93,7 +89,6 @@ const tools = {
     },
   }),
 };
-
 
 export function generateAIResponse(messages: ModelMessage[]) {
   const AI_SYSTEM_PROMPT = `You are a biomedical research assistant that helps researchers find and analyze scientific data.

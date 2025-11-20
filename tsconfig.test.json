@@ -3,9 +3,5 @@
   "compilerOptions": {
     "noImplicitAny": false
   },
-  "include": [
-    "**/*.test.tsx",
-    "src/setupTests.ts"
-  ]
+  "include": ["**/*.test.tsx", "src/setupTests.ts"]
 }
-

@@ -17,49 +17,47 @@ describe("Chat", () => {
     render(<Chat />);
 
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(
+    expect(
+      screen.getByPlaceholderText(
         "What would you like to know about biomedical research?"
-      )).toBeInTheDocument();
+      )
+    ).toBeInTheDocument();
   });
 
-
-  it('renders the messages', () => {
-    vi.spyOn(useChatModule, 'useChat').mockReturnValue({
+  it("renders the messages", () => {
+    vi.spyOn(useChatModule, "useChat").mockReturnValue({
       messages: [
         {
-            "parts": [
-                {
-                    "type": "text",
-                    "text": "User question"
-                }
-            ],
-            "id": "message-id-1",
-            "role": "user"
+          parts: [
+            {
+              type: "text",
+              text: "User question",
+            },
+          ],
+          id: "message-id-1",
+          role: "user",
         },
         {
-            "id": "message-id-2",
-            "role": "assistant",
-            "parts": [
-                {
-                    "type": "step-start"
-                },
-                {
-                    "type": "text",
-                    "text": "Assistant response",
-                    "state": "streaming"
-                }
-            ]
-        }
-    ], status: "idle"
-    } as any)
+          id: "message-id-2",
+          role: "assistant",
+          parts: [
+            {
+              type: "step-start",
+            },
+            {
+              type: "text",
+              text: "Assistant response",
+              state: "streaming",
+            },
+          ],
+        },
+      ],
+      status: "idle",
+    } as any);
 
     render(<Chat />);
 
-    expect(screen.getByText('User question')).toBeInTheDocument();
-    expect(screen.getByText('Assistant response')).toBeInTheDocument();
-  })
+    expect(screen.getByText("User question")).toBeInTheDocument();
+    expect(screen.getByText("Assistant response")).toBeInTheDocument();
+  });
 });
-
-
-
-

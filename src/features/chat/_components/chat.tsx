@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import {  TextStreamChatTransport } from "ai";
+import { TextStreamChatTransport } from "ai";
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,6 @@ export function Chat() {
       api: "/api/chat",
     }),
   });
-
 
   const isLoading = status === "streaming" || status === "submitted";
 
@@ -89,7 +88,8 @@ export function Chat() {
                     Research Assistant
                   </h1>
                   <p className="text-slate-600 dark:text-slate-400">
-                    Ask questions about biomedical research and get instant answers
+                    Ask questions about biomedical research and get instant
+                    answers
                   </p>
                 </div>
                 <Card>
@@ -102,7 +102,11 @@ export function Chat() {
                         disabled={isLoading}
                         className="text-base"
                       />
-                      <Button type="submit" disabled={isLoading} className="w-full">
+                      <Button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full"
+                      >
                         {isLoading ? "Thinking..." : "Send"}
                       </Button>
                     </form>
@@ -135,4 +139,3 @@ export function Chat() {
     </div>
   );
 }
-
