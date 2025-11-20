@@ -5,13 +5,16 @@ import {
   articleSearchArgsSchema,
   trialSearchArgsSchema,
   variantSearchArgsSchema,
+  variantGetArgsSchema,
   aiResultSchema,
   type ArticleSearchInput,
   type TrialSearchInput,
   type VariantSearchInput,
+  type VariantGetInput,
   type ArticleSearchArgs,
   type TrialSearchArgs,
   type VariantSearchArgs,
+  type VariantGetArgs,
   type AiResult,
 } from "@/domain/tools";
 
@@ -30,8 +33,16 @@ When users ask questions:
 5. Cite sources when presenting data
 6. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
 
-You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.`;
+You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.
 
+Tool selection guide:
+- For articles about topics: use searchArticles
+- For clinical trials: use searchTrials
+- For searching variants by criteria: use searchVariants
+- For detailed information about a specific variant ID (rsID, HGVS): use getVariant`;
+
+
+// The MCP Parameters does not seem to accept undefined values
 function filterUndefined<T extends Record<string, unknown>>(
   obj: T
 ): Partial<T> {
@@ -97,6 +108,19 @@ const tools = {
       };
       const filteredArgs = filterUndefined(transformed);
       return await callBioMCPTool<AiResult>("variant_searcher", filteredArgs);
+    },
+  }),
+
+  getVariant: tool({
+    description:
+      "Fetch comprehensive details for a specific genetic variant by ID. Use when users provide a specific variant ID (rsID, HGVS, or MyVariant ID) and need detailed information including population frequencies, clinical significance, and functional predictions.",
+    inputSchema: variantGetArgsSchema,
+    outputSchema: aiResultSchema,
+    execute: async (params: VariantGetInput): Promise<AiResult> => {
+      const args: VariantGetArgs = {
+        variant_id: params.variant_id,
+      };
+      return await callBioMCPTool<AiResult>("variant_getter", args);
     },
   }),
 };
