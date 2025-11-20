@@ -1,7 +1,8 @@
 import { UIMessage } from "ai";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { normalizeMessage } from "../_helpers/message";
 import ReactMarkdown from "react-markdown";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MESSAGE_ROLE } from "@/domain/chat";
+import { normalizeMessage } from "../_helpers/message";
 
 interface ChatMessageProps {
   message: UIMessage;
@@ -13,19 +14,19 @@ export function ChatMessage({ message }: ChatMessageProps) {
   return (
     <Card
       className={
-        role === "user"
+        role === MESSAGE_ROLE.USER
           ? "ml-auto max-w-[80%] bg-slate-100 dark:bg-slate-800 gap-2"
           : "mr-auto max-w-[80%] gap-2"
       }
     >
       <CardHeader className="pb-1">
         <CardTitle className="text-sm font-semibold">
-          {role === "user" ? "You" : "Assistant"}
+          {role === MESSAGE_ROLE.USER ? "You" : "Assistant"}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-          {role === "user" ? (
+          {role === MESSAGE_ROLE.USER ? (
             content
           ) : (
             <ReactMarkdown

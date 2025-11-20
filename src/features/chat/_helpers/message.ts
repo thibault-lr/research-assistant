@@ -1,5 +1,5 @@
 import { UIMessage } from "ai";
-import { ChatMessage } from "@/domain/chat";
+import { ChatMessage,  MessageRole } from "@/domain/chat";
 
 function extractTextFromParts(
   parts: Array<{ type: string; text?: string }>
@@ -15,25 +15,25 @@ function extractTextFromParts(
 }
 
 export function normalizeMessage(message: ChatMessage | UIMessage): {
-  role: "user" | "assistant";
+  role: MessageRole;
   content: string;
 } {
   if ("content" in message && message.content) {
     return {
-      role: message.role as "user" | "assistant",
+      role: message.role,
       content: message.content,
     };
   }
 
   if ("parts" in message && message.parts) {
     return {
-      role: message.role as "user" | "assistant",
+      role: message.role,
       content: extractTextFromParts(message.parts),
     };
   }
 
   return {
-    role: message.role as "user" | "assistant",
+    role: message.role,
     content: "",
   };
 }
