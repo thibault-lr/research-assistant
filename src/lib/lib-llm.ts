@@ -136,6 +136,6 @@ Always format your responses as clean, structured **Markdown** reports. When pre
     messages,
     tools,
     system: AI_SYSTEM_PROMPT,
-    stopWhen: stepCountIs(5),
+    stopWhen: stepCountIs(10),
   });
 }
