@@ -1,40 +1,38 @@
 import { UIMessage } from "ai";
 import { ChatMessage } from "@/domain/chat";
 
-export function getMessageText(message: UIMessage): string {
-  if (message.parts.length === 0) {
+function extractTextFromParts(
+  parts: Array<{ type: string; text?: string }>
+): string {
+  if (parts.length === 0) {
     return "";
   }
 
-  return message.parts
-    .filter((part) => part.type === "text" && "text" in part)
-    .map((part) => part.text)
+  return parts
+    .filter((part) => part.type === "text" && part.text)
+    .map((part) => part.text as string)
     .join("");
 }
 
 export function normalizeMessage(
-  message: ChatMessage
+  message: ChatMessage | UIMessage
 ): { role: "user" | "assistant"; content: string } {
-  if (message.content) {
+  if ("content" in message && message.content) {
     return {
-      role: message.role,
+      role: message.role as "user" | "assistant",
       content: message.content,
     };
   }
 
-  if (message.parts) {
-    const textParts = message.parts
-      .filter((part) => part.type === "text" && part.text)
-      .map((part) => part.text as string);
-
+  if ("parts" in message && message.parts) {
     return {
-      role: message.role,
-      content: textParts.join(""),
+      role: message.role as "user" | "assistant",
+      content: extractTextFromParts(message.parts),
     };
   }
 
   return {
-    role: message.role,
+    role: message.role as "user" | "assistant",
     content: "",
   };
 }

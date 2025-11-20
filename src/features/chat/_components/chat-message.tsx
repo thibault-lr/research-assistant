@@ -1,6 +1,6 @@
 import { UIMessage } from "ai";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getMessageText } from "../_helpers/message";
+import { normalizeMessage } from "../_helpers/message";
 
 interface ChatMessageProps {
   message: UIMessage;
@@ -15,14 +15,14 @@ export function ChatMessage({ message }: ChatMessageProps) {
           : "mr-auto max-w-[80%]"
       }
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-1">
         <CardTitle className="text-sm font-semibold">
           {message.role === "user" ? "You" : "Assistant"}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="whitespace-pre-wrap text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-          {getMessageText(message)}
+          {normalizeMessage(message).content}
         </div>
       </CardContent>
     </Card>

@@ -11,7 +11,6 @@ export async function POST(req: Request) {
 
     const convertedMessages = messages.map(normalizeMessage);
 
-    console.log("Converted", convertedMessages);
     const result = streamAIResponse(convertedMessages);
 
     return result.toUIMessageStreamResponse();
