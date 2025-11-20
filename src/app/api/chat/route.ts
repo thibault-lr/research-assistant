@@ -1,45 +1,82 @@
-import { BioMCPService } from "@/infrastructure/biomcp-service";
-import { userMessageReqBodySchema } from "@/domain/chat";
+import { streamAIResponse } from "@/lib/lib-llm";
 import { NextResponse } from "next/server";
 import z from "zod";
 
-// Force le runtime Node.js (obligatoire pour @modelcontextprotocol/sdk)
 export const runtime = "nodejs";
 
-export async function POST(req: Request) {
-  const BIOMCP_URL = process.env.BIOMCP_URL!;
+const messagePartSchema = z.object({
+  type: z.string(),
+  text: z.string().optional(),
+});
 
+const messageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().optional(),
+  parts: z.array(messagePartSchema).optional(),
+  id: z.string().optional(),
+}).refine(
+  (data) => data.content || (data.parts && data.parts.length > 0),
+  {
+    message: "Message must have either 'content' or 'parts'",
+  }
+);
+
+const chatRequestSchema = z.object({
+  id: z.string().optional(),
+  messages: z.array(messageSchema),
+  trigger: z.string().optional(),
+});
+
+function normalizeMessage(
+  message: z.infer<typeof chatRequestSchema>["messages"][0]
+): { role: "user" | "assistant"; content: string } {
+  if (message.content) {
+    return {
+      role: message.role,
+      content: message.content,
+    };
+  }
+
+  if (message.parts) {
+    const textParts = message.parts
+      .filter((part) => part.type === "text" && part.text)
+      .map((part) => part.text as string);
+
+    return {
+      role: message.role,
+      content: textParts.join(""),
+    };
+  }
+
+  return {
+    role: message.role,
+    content: "",
+  };
+}
+
+export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
-    const { message } = userMessageReqBodySchema.parse(reqBody);
+    const { messages } = chatRequestSchema.parse(reqBody);
 
-    // Appel du service d'infrastructure
-    const service = new BioMCPService(BIOMCP_URL);
-    const stream = await service.evaluateMessage(message);
+    const convertedMessages = messages.map(normalizeMessage);
+    const result = streamAIResponse(convertedMessages);
 
-    console.log("[API] Stream prepared, sending response...");
-
-    // Retour du stream avec les bons headers
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "no-cache",
-      },
-    });
+    return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
     console.error("[API Error]", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid request body", details: z.treeifyError(error) },
+        { error: "Invalid request body", details: error.issues },
         { status: 400 }
       );
     }
 
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: error.message || "Erreur interne du service BioMCP" },
-        { status: 503 }
+        { error: error.message || "Internal server error" },
+        { status: 500 }
       );
     }
 
