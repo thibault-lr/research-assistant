@@ -1,18 +1,20 @@
 import { z } from "zod";
 
-export enum MessageRoleEnum {
-  USER = "user",
-  ASSISTANT = "assistant",
-}
+export const MESSAGE_ROLE = {
+  USER : "user",
+  ASSISTANT : "assistant",
+  SYSTEM : "system",
+} as const;
+export type MessageRole = (typeof MESSAGE_ROLE)[keyof typeof MESSAGE_ROLE];
 
 export const messagePartSchema = z.object({
   type: z.string(),
   text: z.string().optional(),
 });
 
-export const messageSchema = z
+export const chatMessageSchema = z
   .object({
-    role: z.enum(MessageRoleEnum),
+    role: z.enum(Object.values(MESSAGE_ROLE)),
     content: z.string().optional(),
     parts: z.array(messagePartSchema).optional(),
     id: z.string().optional(),
@@ -23,7 +25,7 @@ export const messageSchema = z
 
 export const chatRequestSchema = z.object({
   id: z.string().optional(),
-  messages: z.array(messageSchema),
+  messages: z.array(chatMessageSchema),
   trigger: z.string().optional(),
 });
 
