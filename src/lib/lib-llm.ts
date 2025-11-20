@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google";
-import { generateText, GenerateTextResult, LanguageModel, ModelMessage, streamText, tool, ToolSet } from "ai";
+import { generateText, GenerateTextResult, ModelMessage, streamText, tool, ToolSet } from "ai";
 import { callBioMCPTool } from "@/lib/lib-biomcp";
 import {
   articleSearchArgsSchema,
@@ -11,35 +11,14 @@ import {
   type TrialSearchInput,
   type VariantSearchInput,
   type VariantGetInput,
-  type ArticleSearchArgs,
   type TrialSearchArgs,
   type VariantSearchArgs,
   type VariantGetArgs,
   type AiResult,
 } from "@/domain/tools";
 
-type StreamTextOptions = Parameters<typeof streamText>[0];
-type StreamTextResult = ReturnType<typeof streamText>;
 
-export const AI_MODEL: LanguageModel = google("gemini-2.0-flash");
 
-export const AI_SYSTEM_PROMPT = `You are a biomedical research assistant that helps researchers find and analyze scientific data.
-
-When users ask questions:
-1. For simple conversational queries, respond directly without using tools
-2. For research queries requiring data, use the appropriate search tools to find relevant information
-3. Analyze and synthesize the results
-4. Provide clear, concise answers with context
-5. Cite sources when presenting data
-6. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
-
-You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.
-
-Tool selection guide:
-- For articles about topics: use searchArticles
-- For clinical trials: use searchTrials
-- For searching variants by criteria: use searchVariants
-- For detailed information about a specific variant ID (rsID, HGVS): use getVariant`;
 
 
 // The MCP Parameters does not seem to accept undefined values
@@ -47,7 +26,7 @@ function filterUndefined<T extends Record<string, unknown>>(
   obj: T
 ): Partial<T> {
   return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => value !== undefined)
+    Object.entries(obj).filter(([_key, value]) => value !== undefined)
   ) as Partial<T>;
 }
 
@@ -125,24 +104,31 @@ const tools = {
   }),
 };
 
-export function streamAIResponse(
-  messages: ModelMessage[]
-): StreamTextResult {
-  const options: StreamTextOptions = {
-    model: AI_MODEL,
-    messages,
-    tools,
-    system: AI_SYSTEM_PROMPT,
-  };
-
-  return streamText(options);
-}
 
 export async function generateAIResponse(
   messages: ModelMessage[]
 ) {
+  const AI_SYSTEM_PROMPT = `You are a biomedical research assistant that helps researchers find and analyze scientific data.
+    When users ask questions:
+    1. For simple conversational queries, respond directly without using tools
+    2. For research queries requiring data, use the appropriate search tools to find relevant information
+    3. Analyze and synthesize the results
+    4. Provide clear, concise answers with context
+    5. Cite sources when presenting data
+    6. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
+
+    You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.
+
+    Tool selection guide:
+    - For articles about topics: use searchArticles
+    - For clinical trials: use searchTrials
+    - For searching variants by criteria: use searchVariants
+    - For detailed information about a specific variant ID (rsID, HGVS): use getVariant
+    `;
+
+
   const result = await generateText({
-    model: AI_MODEL,
+    model: google("gemini-2.0-flash"),
     messages,
     tools,
     system: AI_SYSTEM_PROMPT,
@@ -156,7 +142,7 @@ export async function generateAIResponse(
 
 export async function summariseAIResponse<T extends ToolSet>(
   userQuery: string,
-  rawData: GenerateTextResult<T, any>["content"],
+  rawData: GenerateTextResult<T, unknown>["content"],
 ) {
 
   const SUMMARY_PROMPT = `

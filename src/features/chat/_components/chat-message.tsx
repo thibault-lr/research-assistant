@@ -1,7 +1,7 @@
 import { UIMessage } from "ai";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { normalizeMessage } from "../_helpers/message";
-import ReactMarkdown from "react-markdown"; // <--- Import
+import ReactMarkdown from "react-markdown"; 
 
 interface ChatMessageProps {
   message: UIMessage;
@@ -27,30 +27,25 @@ export function ChatMessage({ message }: ChatMessageProps) {
       <CardContent>
         <div className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
           
-          {/* Si c'est l'utilisateur, on affiche le texte brut. 
-              Si c'est l'assistant, on rend le Markdown. */}
+
           
           {role === "user" ? (
             content
           ) : (
             <ReactMarkdown
               components={{
-                // Style pour les listes à puces (points)
-                ul: ({ node, ...props }) => (
+                
+                ul: (props) => (
                   <ul className="list-disc pl-4 my-2 space-y-1" {...props} />
                 ),
-                // Style pour les listes numérotées (1., 2.)
-                ol: ({ node, ...props }) => (
+                ol: (props) => (
                   <ol className="list-decimal pl-4 my-2 space-y-1" {...props} />
                 ),
-                // Style pour les éléments de liste
-                li: ({ node, ...props }) => <li className="pl-1" {...props} />,
-                // Style pour le texte en gras (**text**)
-                strong: ({ node, ...props }) => (
+                li: (props) => <li className="pl-1" {...props} />,
+                strong: (props) => (
                   <span className="font-bold text-slate-900 dark:text-slate-100" {...props} />
                 ),
-                // Style pour les liens (URLs)
-                a: ({ node, ...props }) => (
+                a: (props) => (
                   <a 
                     className="text-blue-600 hover:underline cursor-pointer" 
                     target="_blank" 
@@ -58,8 +53,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                     {...props} 
                   />
                 ),
-                // Gérer les sauts de ligne
-                p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                p: (props) => <p className="mb-2 last:mb-0" {...props} />,
               }}
             >
               {content}
