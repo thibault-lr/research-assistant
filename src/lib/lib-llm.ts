@@ -23,13 +23,22 @@ export const AI_MODEL: LanguageModel = google("gemini-2.0-flash");
 export const AI_SYSTEM_PROMPT = `You are a biomedical research assistant that helps researchers find and analyze scientific data.
 
 When users ask questions:
-1. Use the appropriate search tools to find relevant information
-2. Analyze and synthesize the results
-3. Provide clear, concise answers with context
-4. Cite sources when presenting data
-5. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
+1. For simple conversational queries, respond directly without using tools
+2. For research queries requiring data, use the appropriate search tools to find relevant information
+3. Analyze and synthesize the results
+4. Provide clear, concise answers with context
+5. Cite sources when presenting data
+6. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
 
-You have access to all BioMCP tools. Call them directly as needed. Be helpful, accurate, and focus on actionable insights.`;
+You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.`;
+
+function filterUndefined<T extends Record<string, unknown>>(
+  obj: T
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => value !== undefined)
+  ) as Partial<T>;
+}
 
 const tools = {
   searchArticles: tool({
@@ -47,7 +56,8 @@ const tools = {
         page_size: params.page_size ?? 10,
         include_preprints: true,
       };
-      return callBioMCPTool<AiResult>("article_searcher", transformed);
+      const filteredArgs = filterUndefined(transformed);
+      return await callBioMCPTool<AiResult>("article_searcher", filteredArgs);
     },
   }),
 
@@ -67,7 +77,8 @@ const tools = {
         phase: params.phase,
         page_size: params.page_size ?? 10,
       };
-      return callBioMCPTool<AiResult>("trial_searcher", transformed);
+      const filteredArgs = filterUndefined(transformed);
+      return await callBioMCPTool<AiResult>("trial_searcher", filteredArgs);
     },
   }),
 
@@ -84,7 +95,8 @@ const tools = {
         significance: params.significance,
         page_size: params.page_size ?? 10,
       };
-      return callBioMCPTool<AiResult>("variant_searcher", transformed);
+      const filteredArgs = filterUndefined(transformed);
+      return await callBioMCPTool<AiResult>("variant_searcher", filteredArgs);
     },
   }),
 };

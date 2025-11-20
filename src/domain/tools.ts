@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const articleSearchArgsSchema = z.object({
-  keywords: z.string().describe("Search keywords or full query text for articles"),
+  keywords: z.string().optional().describe("Search keywords or full query text for articles"),
   diseases: z.string().optional().describe("Disease names (e.g., 'inflammatory bowel disease')"),
   genes: z.string().optional().describe("Gene symbols (e.g., 'BRAF', 'TNF-alpha')"),
   chemicals: z.string().optional().describe("Drug or chemical names (e.g., 'adalimumab', 'TNF-alpha inhibitors')"),
