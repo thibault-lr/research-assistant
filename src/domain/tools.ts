@@ -83,7 +83,6 @@ export const variantGetArgsSchema = z.object({
     ),
 });
 
-
 export type ArticleSearchInput = z.infer<typeof articleSearchArgsSchema>;
 export type TrialSearchInput = z.infer<typeof trialSearchArgsSchema>;
 export type VariantSearchInput = z.infer<typeof variantSearchArgsSchema>;
@@ -113,11 +112,11 @@ export type VariantSearchArgs = {
   gene?: string;
   hgvs?: string;
   significance?:
-  | "pathogenic"
-  | "likely_pathogenic"
-  | "uncertain_significance"
-  | "likely_benign"
-  | "benign";
+    | "pathogenic"
+    | "likely_pathogenic"
+    | "uncertain_significance"
+    | "likely_benign"
+    | "benign";
   page_size: number;
 };
 
