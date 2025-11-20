@@ -11,8 +11,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
     <Card
       className={
         message.role === "user"
-          ? "ml-auto max-w-[80%] bg-slate-100 dark:bg-slate-800"
-          : "mr-auto max-w-[80%]"
+          ? "ml-auto max-w-[80%] bg-slate-100 dark:bg-slate-800 gap-2"
+          : "mr-auto max-w-[80%] gap-2"
       }
     >
       <CardHeader className="pb-1">

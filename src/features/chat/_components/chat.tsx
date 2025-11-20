@@ -41,7 +41,7 @@ export function Chat() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <main className="flex flex-col min-h-screen px-4 py-8">
-        <div className="w-full max-w-4xl mx-auto flex flex-col flex-1">
+        <div className="w-full max-w-4xl mx-auto flex flex-col flex-1 gap-4">
           {hasMessages && (
             <div className="space-y-2 text-center">
               <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
