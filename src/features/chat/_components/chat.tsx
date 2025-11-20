@@ -1,12 +1,18 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import {  TextStreamChatTransport } from "ai";
+import { TextStreamChatTransport } from "ai";
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChatMessage } from "./chat-message";
+
+const EXAMPLE_PROMPTS = [
+  "Find papers about TNF-alpha inhibitors in inflammatory bowel disease",
+  "Are there any clinical trials for adalimumab in Crohn's disease?",
+  "What do we know about the rs113488022 genetic variant?",
+];
 
 export function Chat() {
   const [input, setInput] = useState("");
@@ -16,8 +22,14 @@ export function Chat() {
     }),
   });
 
-
   const isLoading = status === "streaming" || status === "submitted";
+
+  const handleExamplePrompt = useCallback(
+    (prompt: string) => {
+      sendMessage({ text: prompt });
+    },
+    [sendMessage]
+  );
 
   const renderMessages = () => {
     return messages.map((message) => (
@@ -89,7 +101,8 @@ export function Chat() {
                     Research Assistant
                   </h1>
                   <p className="text-slate-600 dark:text-slate-400">
-                    Ask questions about biomedical research and get instant answers
+                    Ask questions about biomedical research and get instant
+                    answers
                   </p>
                 </div>
                 <Card>
@@ -102,9 +115,35 @@ export function Chat() {
                         disabled={isLoading}
                         className="text-base"
                       />
-                      <Button type="submit" disabled={isLoading} className="w-full">
+                      <Button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full"
+                      >
                         {isLoading ? "Thinking..." : "Send"}
                       </Button>
+
+                      <div className="space-y-3 pt-2">
+                        <p className="text-sm font-medium text-slate-600 dark:text-slate-400 text-center">
+                          Example prompts:
+                        </p>
+                        <div className="flex flex-col gap-2">
+                          {EXAMPLE_PROMPTS.map((prompt) => (
+                            <Button
+                              key={prompt}
+                              type="button"
+                              variant="ghost"
+                              onClick={() => handleExamplePrompt(prompt)}
+                              disabled={isLoading}
+                              className="w-full justify-start text-left h-auto py-3 px-4 text-sm font-normal hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                            >
+                              <span className="text-slate-700 dark:text-slate-300">
+                                {prompt}
+                              </span>
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
                     </form>
                   </CardContent>
                 </Card>
@@ -135,4 +174,3 @@ export function Chat() {
     </div>
   );
 }
-

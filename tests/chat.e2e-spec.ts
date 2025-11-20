@@ -7,7 +7,7 @@ test.describe("Chat Page", () => {
 
     await page.route("**/api/chat", async (route) => {
       await route.fulfill({
-        status: 500,
+        status: 200,
         contentType: "text/event-stream",
         body: mockResponse,
         headers: {
@@ -25,7 +25,9 @@ test.describe("Chat Page", () => {
     const submitButton = page.getByRole("button", { name: "Send" });
 
     await expect(
-      page.getByText("Ask questions about biomedical research and get instant answers")
+      page.getByText(
+        "Ask questions about biomedical research and get instant answers"
+      )
     ).toBeVisible();
 
     const firstQuestion = "What is DNA?";

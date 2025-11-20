@@ -1,7 +1,7 @@
 import { UIMessage } from "ai";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { normalizeMessage } from "../_helpers/message";
-import ReactMarkdown from "react-markdown"; 
+import ReactMarkdown from "react-markdown";
 
 interface ChatMessageProps {
   message: UIMessage;
@@ -9,7 +9,6 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const { role, content } = normalizeMessage(message);
-  
 
   return (
     <Card
@@ -26,15 +25,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
       </CardHeader>
       <CardContent>
         <div className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-          
-
-          
           {role === "user" ? (
             content
           ) : (
             <ReactMarkdown
               components={{
-                
                 ul: (props) => (
                   <ul className="list-disc pl-4 my-2 space-y-1" {...props} />
                 ),
@@ -43,14 +38,17 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 ),
                 li: (props) => <li className="pl-1" {...props} />,
                 strong: (props) => (
-                  <span className="font-bold text-slate-900 dark:text-slate-100" {...props} />
+                  <span
+                    className="font-bold text-slate-900 dark:text-slate-100"
+                    {...props}
+                  />
                 ),
                 a: (props) => (
-                  <a 
-                    className="text-blue-600 hover:underline cursor-pointer" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    {...props} 
+                  <a
+                    className="text-blue-600 hover:underline cursor-pointer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    {...props}
                   />
                 ),
                 p: (props) => <p className="mb-2 last:mb-0" {...props} />,
@@ -59,7 +57,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
               {content}
             </ReactMarkdown>
           )}
-          
         </div>
       </CardContent>
     </Card>

@@ -5,12 +5,10 @@ export enum MessageRoleEnum {
   ASSISTANT = "assistant",
 }
 
-
 export const messagePartSchema = z.object({
   type: z.string(),
   text: z.string().optional(),
 });
-
 
 export const messageSchema = z
   .object({

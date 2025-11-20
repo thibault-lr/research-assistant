@@ -14,9 +14,10 @@ function extractTextFromParts(
     .join("");
 }
 
-export function normalizeMessage(
-  message: ChatMessage | UIMessage
-): { role: "user" | "assistant"; content: string } {
+export function normalizeMessage(message: ChatMessage | UIMessage): {
+  role: "user" | "assistant";
+  content: string;
+} {
   if ("content" in message && message.content) {
     return {
       role: message.role as "user" | "assistant",
@@ -36,4 +37,3 @@ export function normalizeMessage(
     content: "",
   };
 }
-

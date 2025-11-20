@@ -41,6 +41,4 @@ describe("normalizeMessage", () => {
       content: "",
     });
   });
-
 });
-
