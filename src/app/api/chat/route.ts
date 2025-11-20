@@ -1,9 +1,8 @@
-import { generateAIResponse, summariseAIResponse } from "@/lib/lib-llm";
+import { generateAIResponse } from "@/lib/lib-llm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { chatRequestSchema, MessageRoleEnum } from "@/domain/chat";
+import { chatRequestSchema } from "@/domain/chat";
 import { normalizeMessage } from "@/features/chat/_helpers/message";
-
 
 export async function POST(req: Request) {
   try {
@@ -11,26 +10,10 @@ export async function POST(req: Request) {
 
     const { messages } = chatRequestSchema.parse(reqBody);
     const convertedMessages = messages.map(normalizeMessage);
-    const latestUserQuery = convertedMessages.findLast((message) => message.role === MessageRoleEnum.USER)?.content;
 
-    if(! latestUserQuery) {
-      return new Response("No user query found", { status: 400 });
-    }
+    const result = generateAIResponse(convertedMessages);
 
-
-    const result = await generateAIResponse(convertedMessages);
-
-    if (result.toolCalls.length === 0) {
-      return new Response(result.text)
-    }
-
-    const summaryStream = await summariseAIResponse(
-        latestUserQuery, 
-        result.content
-    );
-
-    return summaryStream.toTextStreamResponse();
-
+    return result.toTextStreamResponse();
   } catch (error: unknown) {
     console.error("[API Error]", error);
 

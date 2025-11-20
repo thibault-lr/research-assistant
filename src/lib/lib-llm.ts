@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google";
-import { generateText, GenerateTextResult, ModelMessage, streamText, tool, ToolSet } from "ai";
+import { ModelMessage, streamText, tool, stepCountIs } from "ai";
 import { callBioMCPTool } from "@/lib/lib-biomcp";
 import {
   articleSearchArgsSchema,
@@ -105,77 +105,52 @@ const tools = {
 };
 
 
-export async function generateAIResponse(
-  messages: ModelMessage[]
-) {
+export function generateAIResponse(messages: ModelMessage[]) {
   const AI_SYSTEM_PROMPT = `You are a biomedical research assistant that helps researchers find and analyze scientific data.
-    When users ask questions:
-    1. For simple conversational queries, respond directly without using tools
-    2. For research queries requiring data, use the appropriate search tools to find relevant information
-    3. Analyze and synthesize the results
-    4. Provide clear, concise answers with context
-    5. Cite sources when presenting data
-    6. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
 
-    You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.
+When users ask questions:
+1. For simple conversational queries, respond directly without using tools
+2. For research queries requiring data, use the appropriate search tools to find relevant information
+3. Analyze and synthesize the results
+4. Provide clear, concise answers with context
+5. Cite sources when presenting data
+6. For variant queries, prefer variant_getter for detailed information if a specific variant ID is mentioned
 
-    Tool selection guide:
-    - For articles about topics: use searchArticles
-    - For clinical trials: use searchTrials
-    - For searching variants by criteria: use searchVariants
-    - For detailed information about a specific variant ID (rsID, HGVS): use getVariant
-    `;
+You have access to BioMCP tools for searching articles, trials, and variants. Use them when you need to find specific research data. Be helpful, accurate, and focus on actionable insights.
 
+Tool selection guide:
+- For articles about topics: use searchArticles
+- For clinical trials: use searchTrials
+- For searching variants by criteria: use searchVariants
+- For detailed information about a specific variant ID (rsID, HGVS): use getVariant
 
-  const result = await generateText({
+**Output Formatting:**
+Always format your responses as clean, structured **Markdown** reports. When presenting tool results:
+
+1. **Variants (SNPs):**
+   - Format: **Genomic Location** (Amino Acid Change): Description.
+
+2. **Clinical Trials:**
+   - Format: **[NCT00000000](Link)** - *Status*
+   - Title in **Bold** on the next line.
+   - 1-sentence summary.
+
+3. **Articles:**
+   - Format: **Title** (Year) - *Journal*
+   - Article link in **blue** on the next line.
+   - Full abstract in **italic** on the next line.
+
+**General Style:**
+- Use bullet points.
+- Be concise. NO JSON in output.
+- Use **bold** for identifiers.
+- Stream your response as you process tool results - don't wait until all tools complete.`;
+
+  return streamText({
     model: AI_MODEL,
     messages,
     tools,
     system: AI_SYSTEM_PROMPT,
+    stopWhen: stepCountIs(5),
   });
-
-  
-
-  return result;
-}
-
-
-export async function summariseAIResponse<T extends ToolSet>(
-  userQuery: string,
-  rawData: GenerateTextResult<T, unknown>["content"],
-) {
-
-  const SUMMARY_PROMPT = `
-    You are a specialized **Biomedical Data Synthesizer**.
-    Your goal is to transform raw data into a clean, structured **Markdown** report.
-    
-    **Input Context:**
-    - User Query: "${userQuery}"
-    - Raw Data: The user will provide raw JSON content.
-
-    **Formatting Rules:**
-    1.  **Variants (SNPs):**
-        - Format: **Genomic Location** (Amino Acid Change): Description.
-    2.  **Clinical Trials:**
-        - Format: **[NCT00000000](Link)** - *Status*
-        - Title in **Bold** on the next line.
-        - 1-sentence summary.
-    3.  **Articles:**
-        - Format: **Title** (Year) - *Journal*
-        - Article link in **blue** on the next line.
-        - Full abstract in **italic** on the next line.
-
-    **General Style:**
-    - Use bullet points.
-    - Be concise. NO JSON in output.
-    - Use **bold** for identifiers.
-  `;
-
-return streamText({
-  model: AI_MODEL,
-  system: SUMMARY_PROMPT,
-  messages: [
-    { role: "user", content: `Raw Data Found: ${rawData}` }
-  ],
-});
 }
