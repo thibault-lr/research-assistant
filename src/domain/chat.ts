@@ -1,16 +1,32 @@
 import { z } from "zod";
 
-export type MessageType = "user" | "assistant";
+export enum MessageTypeEnum {
+  USER = "user",
+  ASSISTANT = "assistant",
+}
 
-export type Message = {
-  sessionId: string;
-  type: MessageType;
-  content: string;
-  timestamp: number;
-};
 
-// Message api Requests
-export const userMessageReqBodySchema = z.strictObject({
-  message: z.string().min(1, "Message content cannot be empty"),
+export const messagePartSchema = z.object({
+  type: z.string(),
+  text: z.string().optional(),
 });
-export type UserMessageReqBodyDto = z.infer<typeof userMessageReqBodySchema>;
+
+export const messageSchema = z
+  .object({
+    role: z.enum(MessageTypeEnum),
+    content: z.string().optional(),
+    parts: z.array(messagePartSchema).optional(),
+    id: z.string().optional(),
+  })
+  .refine((data) => data.content || (data.parts && data.parts.length > 0), {
+    message: "Message must have either 'content' or 'parts'",
+  });
+
+export const chatRequestSchema = z.object({
+  id: z.string().optional(),
+  messages: z.array(messageSchema),
+  trigger: z.string().optional(),
+});
+
+export type ChatRequest = z.infer<typeof chatRequestSchema>;
+export type ChatMessage = z.infer<typeof chatRequestSchema>["messages"][0];

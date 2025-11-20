@@ -1,58 +1,8 @@
 import { streamAIResponse } from "@/lib/lib-llm";
 import { NextResponse } from "next/server";
-import z from "zod";
-
-export const runtime = "nodejs";
-
-const messagePartSchema = z.object({
-  type: z.string(),
-  text: z.string().optional(),
-});
-
-const messageSchema = z.object({
-  role: z.enum(["user", "assistant"]),
-  content: z.string().optional(),
-  parts: z.array(messagePartSchema).optional(),
-  id: z.string().optional(),
-}).refine(
-  (data) => data.content || (data.parts && data.parts.length > 0),
-  {
-    message: "Message must have either 'content' or 'parts'",
-  }
-);
-
-const chatRequestSchema = z.object({
-  id: z.string().optional(),
-  messages: z.array(messageSchema),
-  trigger: z.string().optional(),
-});
-
-function normalizeMessage(
-  message: z.infer<typeof chatRequestSchema>["messages"][0]
-): { role: "user" | "assistant"; content: string } {
-  if (message.content) {
-    return {
-      role: message.role,
-      content: message.content,
-    };
-  }
-
-  if (message.parts) {
-    const textParts = message.parts
-      .filter((part) => part.type === "text" && part.text)
-      .map((part) => part.text as string);
-
-    return {
-      role: message.role,
-      content: textParts.join(""),
-    };
-  }
-
-  return {
-    role: message.role,
-    content: "",
-  };
-}
+import { z } from "zod";
+import { chatRequestSchema } from "@/domain/chat";
+import { normalizeMessage } from "@/features/chat/_helpers/message";
 
 export async function POST(req: Request) {
   try {
@@ -60,6 +10,8 @@ export async function POST(req: Request) {
     const { messages } = chatRequestSchema.parse(reqBody);
 
     const convertedMessages = messages.map(normalizeMessage);
+
+    console.log("Converted", convertedMessages);
     const result = streamAIResponse(convertedMessages);
 
     return result.toUIMessageStreamResponse();
