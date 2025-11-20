@@ -23,6 +23,7 @@ export function Chat() {
   });
 
   const isLoading = status === "streaming" || status === "submitted";
+  const hasMessages = messages.length > 0;
 
   const handleExamplePrompt = useCallback(
     (prompt: string) => {
@@ -30,12 +31,6 @@ export function Chat() {
     },
     [sendMessage]
   );
-
-  const renderMessages = () => {
-    return messages.map((message) => (
-      <ChatMessage key={message.id} message={message} />
-    ));
-  };
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,7 +43,11 @@ export function Chat() {
     [input, sendMessage]
   );
 
-  const hasMessages = messages.length > 0;
+  const renderMessages = () => {
+    return messages.map((message) => (
+      <ChatMessage key={message.id} message={message} />
+    ));
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -106,25 +105,27 @@ export function Chat() {
                   </p>
                 </div>
                 <Card>
-                  <CardContent className="pt-6">
+                  <CardContent className="pt-2">
                     <form onSubmit={handleSubmit} className="space-y-4">
-                      <Input
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="What would you like to know about biomedical research?"
-                        disabled={isLoading}
-                        className="text-base"
-                      />
-                      <Button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        {isLoading ? "Thinking..." : "Send"}
-                      </Button>
+                      <div className="space-y-3 pb-4 pt-0">
+                        <Input
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                          placeholder="What would you like to know about biomedical research?"
+                          disabled={isLoading}
+                          className="h-12 text-base"
+                        />
+                        <Button
+                          type="submit"
+                          disabled={isLoading}
+                          className="w-full"
+                        >
+                          {isLoading ? "Thinking..." : "Search"}
+                        </Button>
+                      </div>
 
                       <div className="space-y-3 pt-2">
-                        <p className="text-sm font-medium text-slate-600 dark:text-slate-400 text-center">
+                        <p className="text-xl font-medium text-slate-600 dark:text-slate-400 text-left">
                           Example prompts:
                         </p>
                         <div className="flex flex-col gap-2">
@@ -153,14 +154,14 @@ export function Chat() {
 
           {hasMessages && (
             <Card className="sticky bottom-0">
-              <CardContent className="pt-6">
+              <CardContent className="pt-2">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="What would you like to know about biomedical research?"
                     disabled={isLoading}
-                    className="text-base"
+                    className="h-12 text-base"
                   />
                   <Button type="submit" disabled={isLoading} className="w-full">
                     {isLoading ? "Thinking..." : "Send"}

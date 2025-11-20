@@ -1,5 +1,5 @@
 import { UIMessage } from "ai";
-import { ChatMessage,  MessageRole } from "@/domain/chat";
+import { ChatMessage, MessageRole } from "@/domain/chat";
 
 function extractTextFromParts(
   parts: Array<{ type: string; text?: string }>
