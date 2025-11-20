@@ -19,7 +19,7 @@ import {
 
 
 
-
+const AI_MODEL = google("gemini-2.0-flash");
 
 // The MCP Parameters does not seem to accept undefined values
 function filterUndefined<T extends Record<string, unknown>>(
@@ -128,7 +128,7 @@ export async function generateAIResponse(
 
 
   const result = await generateText({
-    model: google("gemini-2.0-flash"),
+    model: AI_MODEL,
     messages,
     tools,
     system: AI_SYSTEM_PROMPT,

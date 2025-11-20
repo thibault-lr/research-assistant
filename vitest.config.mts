@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       tsconfigPaths({
-        projects: ["./tsconfig.test.json"],
+        projects: ["./tsconfig.json", "./tsconfig.test.json"],
       }),
       react(),
     ],

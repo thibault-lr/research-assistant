@@ -1,11 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noExplicitAny": false
+    "noImplicitAny": false
   },
   "include": [
     "**/*.test.tsx",
-    
+    "src/setupTests.ts"
   ]
 }
 
