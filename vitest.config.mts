@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: "node",
       env,
+      exclude: ["*.e2e-spec.ts", "node_modules/**"],
     },
   };
 });
