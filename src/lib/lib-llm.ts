@@ -45,7 +45,7 @@ const tools = {
     inputSchema: searchArticleSchema,
     outputSchema: mcpResponseSchema,
     execute: async (params: SearchArticleInput): Promise<MCPResponse> => {
-      const transformed = {
+      const callArgs = {
         keywords: params.keywords ? [params.keywords] : undefined,
         diseases: params.diseases ? [params.diseases] : undefined,
         genes: params.genes ? [params.genes] : undefined,
@@ -54,7 +54,7 @@ const tools = {
         page_size: params.page_size ?? 10,
         include_preprints: true,
       };
-      return await callBioMCPTool<MCPResponse>("article_searcher", transformed);
+      return await callBioMCPTool<MCPResponse>("article_searcher", callArgs);
     },
   }),
 
@@ -64,7 +64,7 @@ const tools = {
     inputSchema: trialSearchArgsSchema,
     outputSchema: mcpResponseSchema,
     execute: async (params: TrialSearchInput): Promise<MCPResponse> => {
-      const transformed: TrialSearchArgs = {
+      const callArgs: TrialSearchArgs = {
         conditions: params.conditions ? [params.conditions] : undefined,
         interventions: params.interventions
           ? [params.interventions]
@@ -74,7 +74,7 @@ const tools = {
         phase: params.phase,
         page_size: params.page_size ?? 10,
       };
-      return await callBioMCPTool<MCPResponse>("trial_searcher", transformed);
+      return await callBioMCPTool<MCPResponse>("trial_searcher", callArgs);
     },
   }),
 
@@ -84,14 +84,14 @@ const tools = {
     inputSchema: variantSearchArgsSchema,
     outputSchema: mcpResponseSchema,
     execute: async (params: VariantSearchInput): Promise<MCPResponse> => {
-      const transformed: VariantSearchArgs = {
+      const callArgs: VariantSearchArgs = {
         rsid: params.rsid,
         gene: params.gene,
         hgvs: params.hgvs,
         significance: params.significance,
         page_size: params.page_size ?? 10,
       };
-      return await callBioMCPTool<MCPResponse>("variant_searcher", transformed);
+      return await callBioMCPTool<MCPResponse>("variant_searcher", callArgs);
     },
   }),
 

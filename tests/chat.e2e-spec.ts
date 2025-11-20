@@ -22,7 +22,7 @@ test.describe("Chat Page", () => {
     const input = page.getByPlaceholder(
       "What would you like to know about biomedical research"
     );
-    const submitButton = page.getByRole("button", { name: "Send" });
+    const submitButton = page.getByRole("button", { name: "Search" });
 
     await expect(
       page.getByText(
