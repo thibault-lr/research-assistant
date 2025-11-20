@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { normalizeMessage } from "./message";
-import { UIMessage } from "ai";
-import { ChatMessage, MessageTypeEnum } from "@/domain/chat";
+
+import { ChatMessage, MessageRoleEnum } from "@/domain/chat";
 
 describe("normalizeMessage", () => {
   it("returns message with content when content exists", () => {
     const message: ChatMessage = {
-      role: MessageTypeEnum.USER,
+      role: MessageRoleEnum.USER,
       content: "Hello world",
     };
 
@@ -18,7 +18,7 @@ describe("normalizeMessage", () => {
 
   it("extracts text from parts when content is missing", () => {
     const message: ChatMessage = {
-      role: MessageTypeEnum.ASSISTANT,
+      role: MessageRoleEnum.ASSISTANT,
       parts: [
         { type: "text", text: "Hello" },
         { type: "text", text: " World" },
@@ -33,7 +33,7 @@ describe("normalizeMessage", () => {
 
   it("returns empty content when neither content nor parts exist", () => {
     const message: ChatMessage = {
-      role: MessageTypeEnum.USER,
+      role: MessageRoleEnum.USER,
     };
 
     expect(normalizeMessage(message)).toEqual({

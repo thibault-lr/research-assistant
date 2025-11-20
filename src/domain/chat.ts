@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export enum MessageTypeEnum {
+export enum MessageRoleEnum {
   USER = "user",
   ASSISTANT = "assistant",
 }
@@ -11,9 +11,10 @@ export const messagePartSchema = z.object({
   text: z.string().optional(),
 });
 
+
 export const messageSchema = z
   .object({
-    role: z.enum(MessageTypeEnum),
+    role: z.enum(MessageRoleEnum),
     content: z.string().optional(),
     parts: z.array(messagePartSchema).optional(),
     id: z.string().optional(),

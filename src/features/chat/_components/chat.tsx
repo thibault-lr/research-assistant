@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { TextStreamChatTransport } from "ai";
+import {  TextStreamChatTransport } from "ai";
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,8 @@ export function Chat() {
     }),
   });
 
-  const isLoading = status === "streaming";
 
+  const isLoading = status === "streaming" || status === "submitted";
 
   const renderMessages = () => {
     return messages.map((message) => (

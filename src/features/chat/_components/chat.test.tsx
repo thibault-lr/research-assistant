@@ -23,7 +23,7 @@ describe("Chat", () => {
   });
 
 
-  it.only('renders the messages', () => {
+  it('renders the messages', () => {
     vi.spyOn(useChatModule, 'useChat').mockReturnValue({
       messages: [
         {
@@ -59,5 +59,7 @@ describe("Chat", () => {
     expect(screen.getByText('Assistant response')).toBeInTheDocument();
   })
 });
+
+
 
 
