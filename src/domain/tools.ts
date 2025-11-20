@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const articleSearchArgsSchema = z.object({
+export const searchArticleSchema = z.object({
   keywords: z
     .string()
     .optional()
@@ -83,10 +83,28 @@ export const variantGetArgsSchema = z.object({
     ),
 });
 
-export type ArticleSearchInput = z.infer<typeof articleSearchArgsSchema>;
+export const thinkSchema = z.object({
+  thought: z.string().describe("The current step of reasoning or analysis"),
+  thoughtNumber: z
+    .number()
+    .int()
+    .min(1)
+    .describe("Sequential step number (starts at 1)"),
+  totalThoughts: z
+    .number()
+    .int()
+    .min(1)
+    .describe("Estimated total number of reasoning steps"),
+  nextThoughtNeeded: z
+    .boolean()
+    .describe("true if reasoning should continue, false if ready to execute"),
+});
+
+export type SearchArticleInput = z.infer<typeof searchArticleSchema>;
 export type TrialSearchInput = z.infer<typeof trialSearchArgsSchema>;
 export type VariantSearchInput = z.infer<typeof variantSearchArgsSchema>;
 export type VariantGetInput = z.infer<typeof variantGetArgsSchema>;
+export type ThinkInput = z.infer<typeof thinkSchema>;
 
 export type ArticleSearchArgs = {
   keywords?: string[];
@@ -124,6 +142,13 @@ export type VariantGetArgs = {
   variant_id: string;
 };
 
+export type ThinkArgs = {
+  thought: string;
+  thoughtNumber: number;
+  totalThoughts: number;
+  nextThoughtNeeded: boolean;
+};
+
 // Actually not used, but it aims to validate tools results
-export const aiResultSchema = z.any().describe("AI tool execution result");
-export type AiResult = z.infer<typeof aiResultSchema>;
+export const mcpResponseSchema = z.any().describe("AI tool execution result");
+export type MCPResponse = z.infer<typeof mcpResponseSchema>;

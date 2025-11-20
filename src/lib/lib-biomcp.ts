@@ -28,6 +28,7 @@ export async function callBioMCPTool<T = unknown>(
   } catch (error: unknown) {
     console.error(`[BioMCP] Error calling tool ${name}:`, error);
 
+    // In case error are meant to be handled differently
     if (error instanceof Error) {
       throw new Error(`Error while calling BioMCP tool : ${name}`, {
         cause: error.cause,
