@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google";
-import { LanguageModel, streamText, tool } from "ai";
+import { generateText, GenerateTextResult, LanguageModel, ModelMessage, streamText, tool, ToolSet } from "ai";
 import { callBioMCPTool } from "@/lib/lib-biomcp";
 import {
   articleSearchArgsSchema,
@@ -58,7 +58,7 @@ const tools = {
     inputSchema: articleSearchArgsSchema,
     outputSchema: aiResultSchema,
     execute: async (params: ArticleSearchInput): Promise<AiResult> => {
-      const transformed: ArticleSearchArgs = {
+      const transformed = {
         keywords: params.keywords ? [params.keywords] : undefined,
         diseases: params.diseases ? [params.diseases] : undefined,
         genes: params.genes ? [params.genes] : undefined,
@@ -126,7 +126,7 @@ const tools = {
 };
 
 export function streamAIResponse(
-  messages: Array<{ role: "user" | "assistant"; content: string }>
+  messages: ModelMessage[]
 ): StreamTextResult {
   const options: StreamTextOptions = {
     model: AI_MODEL,
@@ -136,4 +136,60 @@ export function streamAIResponse(
   };
 
   return streamText(options);
+}
+
+export async function generateAIResponse(
+  messages: ModelMessage[]
+) {
+  const result = await generateText({
+    model: AI_MODEL,
+    messages,
+    tools,
+    system: AI_SYSTEM_PROMPT,
+  });
+
+  
+
+  return result;
+}
+
+
+export async function summariseAIResponse<T extends ToolSet>(
+  userQuery: string,
+  rawData: GenerateTextResult<T, any>["content"],
+) {
+
+  const SUMMARY_PROMPT = `
+    You are a specialized **Biomedical Data Synthesizer**.
+    Your goal is to transform raw data into a clean, structured **Markdown** report.
+    
+    **Input Context:**
+    - User Query: "${userQuery}"
+    - Raw Data: The user will provide raw JSON content.
+
+    **Formatting Rules:**
+    1.  **Variants (SNPs):**
+        - Format: **Genomic Location** (Amino Acid Change): Description.
+    2.  **Clinical Trials:**
+        - Format: **[NCT00000000](Link)** - *Status*
+        - Title in **Bold** on the next line.
+        - 1-sentence summary.
+    3.  **Articles:**
+        - Format: **Title** (Year) - *Journal*
+        - Article link in **blue** on the next line.
+        - Full abstract in **italic** on the next line.
+
+    **General Style:**
+    - Use bullet points.
+    - Be concise. NO JSON in output.
+    - Use **bold** for identifiers.
+  `;
+
+return streamText({
+  model: AI_MODEL,
+  system: SUMMARY_PROMPT,
+  messages: [
+    { role: "user", content: `Raw Data Found: ${rawData}` }
+  ],
+});
 }

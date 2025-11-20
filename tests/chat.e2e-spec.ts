@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Chat Flow", () => {
-  test("Simple conversation flow", async ({ page }) => {
+test.describe("Chat Page", () => {
+  test("Simple chat flow", async ({ page }) => {
     const mockResponse =
       "DNA is the molecule that carries genetic instructions in all living organisms.";
 
@@ -25,7 +25,7 @@ test.describe("Chat Flow", () => {
     const submitButton = page.getByRole("button", { name: "Send" });
 
     await expect(
-      page.getByText("Start a conversation to see results here")
+      page.getByText("Ask questions about biomedical research and get instant answers")
     ).toBeVisible();
 
     const firstQuestion = "What is DNA?";
