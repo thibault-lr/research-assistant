@@ -7,7 +7,7 @@ test.describe("Chat Page", () => {
 
     await page.route("**/api/chat", async (route) => {
       await route.fulfill({
-        status: 500,
+        status: 200,
         contentType: "text/event-stream",
         body: mockResponse,
         headers: {
