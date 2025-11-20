@@ -7,7 +7,12 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode || "test", process.cwd(), "");
 
   return {
-    plugins: [tsconfigPaths(), react()],
+    plugins: [
+      tsconfigPaths({
+        projects: ["./tsconfig.json", "./tsconfig.test.json"],
+      }),
+      react(),
+    ],
     test: {
       environment: "jsdom",
       env,
