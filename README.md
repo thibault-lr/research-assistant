@@ -1,50 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Research Assistant
+
+A Next.js application that acts as an AI-powered biomedical research assistant. It uses the **Vercel AI SDK** and **Model Context Protocol (MCP)** to query PubMed, ClinicalTrials.gov, and MyVariant.info.
 
 ## Environment Variables
 
-This project requires the following environment variables to be set:
+You need to set the following variables in a `.env.local` file:
 
-- `BIOMCP_URL` - The URL of the BioMCP server (SSE endpoint). Example: `https://biomcp-server.com/sse`
-- `GOOGLE_GENERATIVE_AI_API_KEY` - Your Google Generative AI API key for the Gemini model
+- `BIOMCP_URL` - The URL of the BioMCP server (SSE endpoint).
+- `GOOGLE_GENERATIVE_AI_API_KEY` - Your Google Gemini API key.
 
-Create a `.env.local` file in the root directory with these variables:
-
-```bash
-BIOMCP_URL=https://biomcp-server.com/sse
-GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
-```
 
 ## Getting Started
+Run the development server: `yarn dev` 
 
-First, run the development server:
+Open http://localhost:3000 in your browser.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Architecture & Flow
+This app connects a Chat UI to biomedical data sources through an AI Agent.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### How it works (Example)
+1 - User prompt : "Find papers about TNF-alpha inhibitors."
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2 - Analysis: The AI model (Gemini) analyzes the request.
 
-## Learn More
+3 - Tools: The AI calls a specific tool (e.g., searchArticles) if he can match the prompt with a tool. If not, he just returns the output of (2) 
+    
+4 - MCP : Connect to BioMCP Server to search for results
 
-To learn more about Next.js, take a look at the following resources:
+5 - Response: The raw data is summarized into markdown and streamed back
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
+The code is organized to separate the user interface from the business logic.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`src/app`: Handles routing and API endpoints (like /api/chat).
 
-## Deploy on Vercel
+`src/features`: Contains the app core logic (Chat page components)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`src/domain`: Defines the data types and core validation rules (Zod schemas).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`src/lib`: manages the interractions with external libraries like LLM & BioMCP server
+
+`src/components/ui`: Reusable design elements (buttons, cards, inputs).
