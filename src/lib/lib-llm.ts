@@ -20,7 +20,7 @@ import {
   type MCPResponse,
 } from "@/domain/tools";
 
-const AI_MODEL = google("gemini-2.0-flash");
+const AI_MODEL = google("gemini-2.0-flash-lite");
 
 const tools = {
   think: tool({
