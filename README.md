@@ -44,3 +44,27 @@ The code is organized to separate the user interface from the business logic.
 `src/lib`: manages the interractions with external libraries like LLM & BioMCP server
 
 `src/components/ui`: Reusable design elements (buttons, cards, inputs).
+
+## Technical stack :
+
+- Server : NextJS
+- UI : ShadCN / Tailwind
+- Validation : zod
+- LLM: Vercel ai-sdk
+- Testing: Vitest + Playwright
+- Infra : Vercel
+
+## Further improvements
+
+While the app is currently simple, it contains the logic and design patterns needed to build a scalable system:
+
+- Strong validation with Zod for type safety
+- Reusable UI components
+- Testing
+
+To make it production-ready, the next steps could be:
+
+- A left panel containing the chat history, backed by a dedicated database.
+- Upgrading BioMCP outputs from static text to interactive components. This would allow users to sort, filter, and paginate through research papers or clinical trials directly in the chat.
+- Implementing monitoring tools to track performance.
+- Leveraging LLM streaming capabilities to visualize the "thinking process".
